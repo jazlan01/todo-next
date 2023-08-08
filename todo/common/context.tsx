@@ -11,6 +11,7 @@ export interface contextInterface {
     removeItem: (id: number) => void;
     updateItem: (id: number, item: ItemProps) => void;
     getItem: (id: number) => ItemProps | undefined;
+    count: number;
 };
 
 export const Context = createContext<contextInterface>({
@@ -21,11 +22,13 @@ export const Context = createContext<contextInterface>({
     addItem: () => {},
     removeItem: () => {},
     updateItem: () => {},
-    getItem: () => { return { id: 0, title: "", description: "", completed: false } }
+    getItem: () => { return { id: 0, title: "", description: "", completed: false } },
+    count: 0
 });
 
 export const ContextProvider = ({ children } : {children:React.ReactNode}) => {
     const [items, setItems] = useState<ItemProps[]>([]);
+    const [count, setCount] = useState<number>(0);
 
     const clearItems = () => {
         setItems([]);
@@ -39,12 +42,13 @@ export const ContextProvider = ({ children } : {children:React.ReactNode}) => {
     }
     const addItem = async (title : string, description : string) => {
         const item : ItemProps = {
-            id: items.length + 1,
+            id: count,
             title: title,
             description: description,
             completed: false
         }
         setItems([...items, item]);
+        setCount(count + 1);
     }
     const removeItem = (id: number) => {
         setItems(items.filter(item => item.id !== id));
@@ -67,7 +71,8 @@ export const ContextProvider = ({ children } : {children:React.ReactNode}) => {
             addItem,
             removeItem,
             updateItem,
-            getItem
+            getItem,
+            count
         };
     }, [items]);
 
@@ -77,16 +82,23 @@ export const ContextProvider = ({ children } : {children:React.ReactNode}) => {
             if (items) {
                 setItems(JSON.parse(items));
             }
+            const count = localStorage.getItem("count");
+            if (count) {
+                setCount(parseInt(count));
+            }
         }
     }, [])
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
-            console.log("In use effect, setting items to " + JSON.stringify(items));
             localStorage.setItem("items", JSON.stringify(items));
         }
 
     }, [items])
+
+    useEffect(()=>{
+        localStorage.setItem("count", count.toString());
+    }, [count])
 
     return (
         <Context.Provider value={context}>

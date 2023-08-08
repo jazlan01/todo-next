@@ -7,7 +7,7 @@ export interface contextInterface {
     setItems: (items: ItemProps[]) => void;
     clearItems: () => void;
     markItemComplete: (id: number) => void;
-    addItem: (item: ItemProps) => void;
+    addItem: (title : string, description : string) => void;
     removeItem: (id: number) => void;
     updateItem: (id: number, item: ItemProps) => void;
     getItem: (id: number) => ItemProps | undefined;
@@ -29,9 +29,6 @@ export const ContextProvider = ({ children } : {children:React.ReactNode}) => {
 
     const clearItems = () => {
         setItems([]);
-        if (typeof window !== 'undefined') {
-            localStorage.setItem("items", JSON.stringify(items));
-        }
     }
     const markItemComplete = (id: number) => {
         const item = getItem(id);
@@ -39,29 +36,23 @@ export const ContextProvider = ({ children } : {children:React.ReactNode}) => {
             item.completed = true;
             updateItem(id, item);
         }
-        if (typeof window !== 'undefined') {
-            localStorage.setItem("items", JSON.stringify(items));
-        }
     }
-    const addItem = (item: ItemProps) => {
-        setItems([...items, item]);
-        if (typeof window !== 'undefined') {
-            localStorage.setItem("items", JSON.stringify(items));
+    const addItem = async (title : string, description : string) => {
+        const item : ItemProps = {
+            id: items.length + 1,
+            title: title,
+            description: description,
+            completed: false
         }
+        setItems([...items, item]);
     }
     const removeItem = (id: number) => {
         setItems(items.filter(item => item.id !== id));
-        if (typeof window !== 'undefined') {
-            localStorage.setItem("items", JSON.stringify(items));
-        }
     }
     const updateItem = (id: number, item: ItemProps) => {
         const index = items.findIndex(item => item.id === id);
         items[index] = item;
         setItems([...items]);
-        if (typeof window !== 'undefined') {
-            localStorage.setItem("items", JSON.stringify(items));
-        }
     }
     const getItem = (id: number) => {
         return items.find(item => item.id === id);
@@ -87,9 +78,15 @@ export const ContextProvider = ({ children } : {children:React.ReactNode}) => {
                 setItems(JSON.parse(items));
             }
         }
-        console.log("Adding test item")
-        addItem({ id: 1, title: "Test", description: "This is a test", completed: false });
     }, [])
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            console.log("In use effect, setting items to " + JSON.stringify(items));
+            localStorage.setItem("items", JSON.stringify(items));
+        }
+
+    }, [items])
 
     return (
         <Context.Provider value={context}>

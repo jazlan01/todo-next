@@ -4,7 +4,7 @@ import Item, { ItemProps } from "./item";
 import { Context } from "@/common/context";
 
 export default function ItemList() {
-  const { items } = useContext(Context);
+  const { items, clearItems } = useContext(Context);
 
   return (
       <div className="h-screen w-full flex flex-col justify-center align-middle">
@@ -15,7 +15,7 @@ export default function ItemList() {
         </div>
         <div className="m-5 h-12 max-w-48 text-center">
           <button
-            onClick={() => {}}
+            onClick={clearItems}
             className="w-full lg:w-64 lg:text-2xl h-full bg-cyan-600 hover:bg-cyan-700 text-white rounded-3xl"
           >
             Clear All

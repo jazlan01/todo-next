@@ -7,7 +7,7 @@ export default function ItemList() {
   const { items, clearItems } = useContext(Context);
 
   return (
-      <div className="h-screen w-full flex flex-col justify-center align-middle">
+      <div className="h-full w-full flex flex-col justify-center align-middle">
         <div className="w-full h-3/4 m-auto overflow-x-scroll pr-4">
             {items.map((task: ItemProps) => {
               return <Item key={task.id} {...task} />;

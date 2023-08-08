@@ -15,7 +15,7 @@ export default function NewLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body
-        className={` ${inter.className} container mx-auto p-4 pt-8 pb-24 dark:text-white light:text-black h-screen overflow-scroll`}
+        className={` ${inter.className} container w-screen h-screen text-white dark:text-black`}
       >
         <ContextProvider>{children}</ContextProvider>
       </body>
